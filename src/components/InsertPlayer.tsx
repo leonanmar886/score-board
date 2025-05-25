@@ -25,7 +25,7 @@ export default function InsertPlayer({
           placeholder="Nome do Jogador"
           className="border border-gray-300 rounded p-2"
         />
-        <button type="submit" className="bg-blue-500 text-white rounded p-2">Inserir Novo</button>
+        <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white rounded p-2">Inserir Novo</button>
       </form>
     </div>
   );

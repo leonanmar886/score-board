@@ -2,7 +2,6 @@
 
 import Score from "../components/Score";
 import InsertPlayer from "../components/InsertPlayer";
-import Image from "next/image";
 import React from "react";
 import Player from "@app/components/Player";
 import { useState } from "react";
@@ -13,7 +12,11 @@ import Button from "@app/components/Button";
 export default function Home() {
   const [playersA, setPlayersA] = useState<IPlayer[]>([]);
   const [playersB, setPlayersB] = useState<IPlayer[]>([]);
-
+  const [teamNameA, setTeamNameA] = useState("Fortaleza");
+  const [teamNameB, setTeamNameB] = useState("Ceará");
+  const [editingNames, setEditingNames] = useState(false);
+  const [tempTeamNameA, setTempTeamNameA] = useState(teamNameA);
+  const [tempTeamNameB, setTempTeamNameB] = useState(teamNameB);
 
   const totalScoreA = playersA.reduce((acc, player) => acc + player.score, 0);
   const totalScoreB = playersB.reduce((acc, player) => acc + player.score, 0);
@@ -42,14 +45,51 @@ export default function Home() {
 
   return (
     <>
-      <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-2 gap-16 sm:p-50 font-[family-name:var(--font-geist-sans)]">
+      <div className="grid items-center justify-items-center min-h-screen p-8 pb-2 gap-16 font-[family-name:var(--font-geist-sans)]">
         <div className="teams-name flex flex-row align-center gap-4 justify-center items-center">
-          <Score teamName="Fortaleza" score={totalScoreA} />
+          <Score teamName={teamNameA} score={totalScoreA} />
           vs.
-          <Score teamName="Ceará" score={totalScoreB} position="right" />
+          <Score teamName={teamNameB} score={totalScoreB} position="right" />
         </div>
 
-        <div className="teams flex flex-row gap-8 justify-center items-center">
+        {editingNames && (
+          <div>
+          <strong>Altere o nome dos times:</strong>
+          <div className="flex flex-row gap-4 justify-center items-center mb-2 bg-gray-200 p-4 rounded">
+            <input
+              type="text"
+              value={tempTeamNameA}
+              onChange={e => setTempTeamNameA(e.target.value)}
+              className="border border-gray-300 bg-white rounded p-2"
+              placeholder="Nome do Time A"
+            />
+            
+            <text>vs.</text>
+
+            <input
+              type="text"
+              value={tempTeamNameB}
+              onChange={e => setTempTeamNameB(e.target.value)}
+              className="border border-gray-300 bg-white rounded p-2"
+              placeholder="Nome do Time B"
+            />
+
+            <Button onClick={() => {
+              setTeamNameA(tempTeamNameA);
+              setTeamNameB(tempTeamNameB);
+              setEditingNames(false);
+            }}>
+              Salvar
+            </Button>
+
+            <Button onClick={() => setEditingNames(false)}>
+              Cancelar
+            </Button>
+          </div>
+          </div>
+        )}
+
+        <div className="teams flex flex-row gap-8 justify-center items-center-top">
 
           <div className="team flex flex-col gap-4">
             <InsertPlayer onInsertPlayer={(name) => handleInsertPlayer("A", name)} />
@@ -81,9 +121,7 @@ export default function Home() {
 
         </div>
         <div className="buttons flex flex-row gap-4 justify-center items-center">
-          <Button
-
-          >
+          <Button onClick={() => setEditingNames(true)}>
             Alterar Nomes
           </Button>
 
@@ -95,7 +133,7 @@ export default function Home() {
             Resetar Placar
           </Button>
 
-          <Button>
+          <Button onClick={() => {}}>
             Desfazer
           </Button>
         </div>
