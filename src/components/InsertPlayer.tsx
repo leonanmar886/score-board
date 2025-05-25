@@ -1,3 +1,5 @@
+'use client';
+
 interface InsertPlayerProps {
   onInsertPlayer: (name: string) => void;
 }
