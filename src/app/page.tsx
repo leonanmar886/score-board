@@ -42,16 +42,15 @@ export default function Home() {
     if (!name.trim() || players.some(player => player.name === name)) return;
     setPreviousState({ playersA: [...playersA], playersB: [...playersB] });
     setPlayers(prev => [...prev, { name, score: 0 }]);
-    alert(`Jogador inserido no time ${team === "A" ? "Fortaleza" : "Ceará"}: ${name}`);
   };
 
   const handleUndo = () => {
-  if (previousState) {
-    setPlayersA(previousState.playersA);
-    setPlayersB(previousState.playersB);
-    setPreviousState(null); // Limpa o estado anterior após desfazer
-  }
-};
+    if (previousState) {
+      setPlayersA(previousState.playersA);
+      setPlayersB(previousState.playersB);
+      setPreviousState(null); // Limpa o estado anterior após desfazer
+    }
+  };
 
 
   return (
@@ -65,38 +64,38 @@ export default function Home() {
 
         {editingNames && (
           <div>
-          <strong>Altere o nome dos times:</strong>
-          <div className="flex flex-row gap-4 justify-center items-center mb-2 bg-gray-200 p-4 rounded">
-            <input
-              type="text"
-              value={tempTeamNameA}
-              onChange={e => setTempTeamNameA(e.target.value)}
-              className="border border-gray-300 bg-white rounded p-2"
-              placeholder="Nome do Time A"
-            />
-            
-            <p>vs.</p>
+            <strong>Altere o nome dos times:</strong>
+            <div className="flex flex-row gap-4 justify-center items-center mb-2 bg-gray-200 p-4 rounded">
+              <input
+                type="text"
+                value={tempTeamNameA}
+                onChange={e => setTempTeamNameA(e.target.value)}
+                className="border border-gray-300 bg-white rounded p-2"
+                placeholder="Nome do Time A"
+              />
 
-            <input
-              type="text"
-              value={tempTeamNameB}
-              onChange={e => setTempTeamNameB(e.target.value)}
-              className="border border-gray-300 bg-white rounded p-2"
-              placeholder="Nome do Time B"
-            />
+              <p>vs.</p>
 
-            <Button onClick={() => {
-              setTeamNameA(tempTeamNameA);
-              setTeamNameB(tempTeamNameB);
-              setEditingNames(false);
-            }}>
-              Salvar
-            </Button>
+              <input
+                type="text"
+                value={tempTeamNameB}
+                onChange={e => setTempTeamNameB(e.target.value)}
+                className="border border-gray-300 bg-white rounded p-2"
+                placeholder="Nome do Time B"
+              />
 
-            <Button onClick={() => setEditingNames(false)}>
-              Cancelar
-            </Button>
-          </div>
+              <Button onClick={() => {
+                setTeamNameA(tempTeamNameA);
+                setTeamNameB(tempTeamNameB);
+                setEditingNames(false);
+              }}>
+                Salvar
+              </Button>
+
+              <Button onClick={() => setEditingNames(false)}>
+                Cancelar
+              </Button>
+            </div>
           </div>
         )}
 
@@ -140,7 +139,6 @@ export default function Home() {
             setPreviousState({ playersA: [...playersA], playersB: [...playersB] });
             setPlayersA([]);
             setPlayersB([]);
-            alert("Placar zerado!");
           }}>
             Resetar Placar
           </Button>
