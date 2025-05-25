@@ -8,10 +8,19 @@ import Player from "@app/components/Player";
 import { useState } from "react";
 import { IPlayer } from "@app/interfaces/index";
 import sortPlayersByScore from "@app/utils/index";
+import Button from "@app/components/Button";
 
 export default function Home() {
-  const [players, setPlayers] = useState<IPlayer[]>([]);
-  const handleAddPoints = (playerName: string, pointsToAdd: number) => {
+  const [playersA, setPlayersA] = useState<IPlayer[]>([]);
+  const [playersB, setPlayersB] = useState<IPlayer[]>([]);
+
+
+  const totalScoreA = playersA.reduce((acc, player) => acc + player.score, 0);
+  const totalScoreB = playersB.reduce((acc, player) => acc + player.score, 0);
+
+  // Função unificada para adicionar pontos
+  const handleAddPoints = (team: "A" | "B", playerName: string, pointsToAdd: number) => {
+    const setPlayers = team === "A" ? setPlayersA : setPlayersB;
     setPlayers((prevPlayers) =>
       prevPlayers.map((player) =>
         player.name === playerName
@@ -21,31 +30,74 @@ export default function Home() {
     );
   };
 
-  // Função de exemplo para lidar com a inserção de jogador
-  const handleInsertPlayer = (name: string) => {
+  // Função unificada para inserir jogador
+  const handleInsertPlayer = (team: "A" | "B", name: string) => {
+    const players = team === "A" ? playersA : playersB;
+    const setPlayers = team === "A" ? setPlayersA : setPlayersB;
     if (!name.trim() || players.some(player => player.name === name)) return;
     setPlayers(prev => [...prev, { name, score: 0 }]);
-    alert(`Jogador inserido: ${name}`);
-    // Você pode adicionar lógica para inserir o jogador aqui
+    alert(`Jogador inserido no time ${team === "A" ? "Fortaleza" : "Ceará"}: ${name}`);
   };
-  
+
 
   return (
     <>
-      <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-        <InsertPlayer onInsertPlayer={handleInsertPlayer} />
+      <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-2 gap-16 sm:p-50 font-[family-name:var(--font-geist-sans)]">
+        <div className="teams-name flex flex-row align-center gap-4 justify-center items-center">
+          <Score teamName="Fortaleza" score={totalScoreA} />
+          vs.
+          <Score teamName="Ceará" score={totalScoreB} position="right" />
+        </div>
 
-        <Score teamName="Ceará" score={0} position="right" />
-        <Score teamName="Fortaleza" score={0} />
-        <div className="flex flex-col gap-4 w-full max-w-xl">
-        {sortPlayersByScore(players).map((player) => (
-          <Player
-            key={player.name}
-            name={player.name}
-            score={player.score}
-            onAddPoints={handleAddPoints}
-          />
-        ))}
+        <div className="teams flex flex-row gap-8 justify-center items-center">
+
+          <div className="team flex flex-col gap-4">
+            <InsertPlayer onInsertPlayer={(name) => handleInsertPlayer("A", name)} />
+            <div className="flex flex-col gap-4 w-full max-w-xl">
+              {sortPlayersByScore(playersA).map((player) => (
+                <Player
+                  key={player.name}
+                  name={player.name}
+                  score={player.score}
+                  onAddPoints={(name, points) => handleAddPoints("A", name, points)}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="team flex flex-col gap-4">
+            <InsertPlayer onInsertPlayer={(name) => handleInsertPlayer("B", name)} />
+            <div className="flex flex-col gap-4 w-full max-w-xl">
+              {sortPlayersByScore(playersB).map((player) => (
+                <Player
+                  key={player.name}
+                  name={player.name}
+                  score={player.score}
+                  onAddPoints={(name, points) => handleAddPoints("B", name, points)}
+                />
+              ))}
+            </div>
+          </div>
+
+        </div>
+        <div className="buttons flex flex-row gap-4 justify-center items-center">
+          <Button
+
+          >
+            Alterar Nomes
+          </Button>
+
+          <Button onClick={() => {
+            setPlayersA([]);
+            setPlayersB([]);
+            alert("Placar zerado!");
+          }}>
+            Resetar Placar
+          </Button>
+
+          <Button>
+            Desfazer
+          </Button>
         </div>
       </div>
     </>
