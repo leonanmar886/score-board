@@ -13,7 +13,8 @@ export default function Button({
         <button
             className="bg-blue-500 w-40 text-white rounded p-2 hover:bg-blue-600 transition duration-200"
             onClick={onClick}
-        >   disabled={disabled}
+            disabled={disabled}
+        >
             {children}
         </button>
     );
