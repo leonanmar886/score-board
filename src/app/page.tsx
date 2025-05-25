@@ -17,12 +17,14 @@ export default function Home() {
   const [editingNames, setEditingNames] = useState(false);
   const [tempTeamNameA, setTempTeamNameA] = useState(teamNameA);
   const [tempTeamNameB, setTempTeamNameB] = useState(teamNameB);
+  const [previousState, setPreviousState] = useState<{ playersA: IPlayer[]; playersB: IPlayer[] } | null>(null);
 
   const totalScoreA = playersA.reduce((acc, player) => acc + player.score, 0);
   const totalScoreB = playersB.reduce((acc, player) => acc + player.score, 0);
 
   // Função unificada para adicionar pontos
   const handleAddPoints = (team: "A" | "B", playerName: string, pointsToAdd: number) => {
+    setPreviousState({ playersA: [...playersA], playersB: [...playersB] });
     const setPlayers = team === "A" ? setPlayersA : setPlayersB;
     setPlayers((prevPlayers) =>
       prevPlayers.map((player) =>
@@ -38,9 +40,18 @@ export default function Home() {
     const players = team === "A" ? playersA : playersB;
     const setPlayers = team === "A" ? setPlayersA : setPlayersB;
     if (!name.trim() || players.some(player => player.name === name)) return;
+    setPreviousState({ playersA: [...playersA], playersB: [...playersB] });
     setPlayers(prev => [...prev, { name, score: 0 }]);
     alert(`Jogador inserido no time ${team === "A" ? "Fortaleza" : "Ceará"}: ${name}`);
   };
+
+  const handleUndo = () => {
+  if (previousState) {
+    setPlayersA(previousState.playersA);
+    setPlayersB(previousState.playersB);
+    setPreviousState(null); // Limpa o estado anterior após desfazer
+  }
+};
 
 
   return (
@@ -48,7 +59,7 @@ export default function Home() {
       <div className="grid items-center justify-items-center min-h-screen p-8 pb-2 gap-16 font-[family-name:var(--font-geist-sans)]">
         <div className="teams-name flex flex-row align-center gap-4 justify-center items-center">
           <Score teamName={teamNameA} score={totalScoreA} />
-          vs.
+          <p>vs.</p>
           <Score teamName={teamNameB} score={totalScoreB} position="right" />
         </div>
 
@@ -64,7 +75,7 @@ export default function Home() {
               placeholder="Nome do Time A"
             />
             
-            <text>vs.</text>
+            <p>vs.</p>
 
             <input
               type="text"
@@ -126,6 +137,7 @@ export default function Home() {
           </Button>
 
           <Button onClick={() => {
+            setPreviousState({ playersA: [...playersA], playersB: [...playersB] });
             setPlayersA([]);
             setPlayersB([]);
             alert("Placar zerado!");
@@ -133,7 +145,7 @@ export default function Home() {
             Resetar Placar
           </Button>
 
-          <Button onClick={() => {}}>
+          <Button onClick={handleUndo} disabled={!previousState}>
             Desfazer
           </Button>
         </div>
